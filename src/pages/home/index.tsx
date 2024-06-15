@@ -70,6 +70,10 @@ export const Home = () => {
           <DealsChart/>
         </Col>
       </Row>
+
+      <Row>
+        
+      </Row>
     </div>
   )
 }
