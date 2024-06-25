@@ -13,12 +13,12 @@ import { TaskStagesQuery, TasksQuery } from '@/graphql/types'
 import { DragEndEvent } from '@dnd-kit/core'
 import { useList, useNavigation, useUpdate } from '@refinedev/core'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
-import Item from 'antd/es/list/Item'
+
 import React from 'react'
 
-type Task = GetFieldsFromList<TasksQuery>
+type Tasks = GetFieldsFromList<TasksQuery>
 type TaskStage = GetFieldsFromList<TaskStagesQuery> & {
-    task: Task[]
+    task: Tasks
 }
 
 
@@ -72,12 +72,12 @@ const List = ({children}: React.PropsWithChildren) => {
     const taskStages = React.useMemo(() => {
         if(!tasks?.data || !stages?.data ){
             return {
-                unnasignedStage: [],
+                unassignedStage: [],
                 stages: []
             }
         }
 
-        const unnasignedStage = tasks.data.filter((task) => task.stageId === null )
+        const unassignedStage = tasks.data.filter((task) => task.stageId === null )
 
         const grouped: TaskStage[] = stages.data.map((stage) => ({
             ...stage,
@@ -85,13 +85,13 @@ const List = ({children}: React.PropsWithChildren) => {
         }) )
 
         return{
-            unnasignedStage,
+            unassignedStage,
             columns: grouped 
         }
     }, [stages, tasks] )
 
     const handleAddCard = (args: {stageId: string}) => {
-        const path = args.stageId === 'unnasigned'
+        const path = args.stageId === 'unassigned'
         ? '/task/new'
         : `/task/new?stageId=${args.stageId}`
 
@@ -110,7 +110,7 @@ const List = ({children}: React.PropsWithChildren) => {
 
         if(taskStageId === stageId) return;
 
-        if(stageId === 'unnasigned'){
+        if(stageId === 'unassigned'){
             stageId = null
         }
 
@@ -141,13 +141,13 @@ const List = ({children}: React.PropsWithChildren) => {
             <KanbanBoard onDragEnd={handleOnDragEnd}>
 
                 <KanbanColumn
-                    id='unnasigned'
-                    title='unnasigned'
-                    count={taskStages.unnasignedStage.length || 0}
-                    onAddClick={() => handleAddCard({stageId: 'unnasigned'})}
+                    id='unassigned'
+                    title='unassigned'
+                    count={taskStages.unassignedStage.length || 0}
+                    onAddClick={() => handleAddCard({stageId: 'unassigned'})}
                 >
-                    {taskStages.unnasignedStage.map((task) => (
-                        <KanbanItem key={task.id} id={task.id}  data={{ ...task, stageId: 'unnasigned'}}>
+                    {taskStages.unassignedStage.map((task) => (
+                        <KanbanItem key={task.id} id={task.id}  data={{ ...task, stageId: 'unassigned'}}>
                             <ProjectCardMemo 
                                 {...task}
                                 dueDate = {task.dueDate || undefined}
@@ -155,21 +155,21 @@ const List = ({children}: React.PropsWithChildren) => {
                         </KanbanItem> 
                     ))}
                 
-                    {!taskStages.unnasignedStage.length && (
+                    {!taskStages.unassignedStage.length && (
                         <KanbanAddCardButton 
-                            onClick={() => handleAddCard({stageId: 'unnasigned'})}
+                            onClick={() => handleAddCard({stageId: 'unassigned'})}
                         />
                     )}
                 </KanbanColumn>
                     {taskStages.columns?.map((column) => (
-                        <KanbanColumn
+                        <KanbanColumn 
                             key={column.id}
                             id={column.id}
                             title={column.title}
-                            count={column.task.length}
+                            count={column.tasks.length}
                             onAddClick={() => handleAddCard({stageId: column.id})}
                         >
-                            {!isLoading && column.task.map((task) => (
+                            {!isLoading && column.tasks.map((task) => (
                                 <KanbanItem key={task.id} id={task.id} data={task}>
                                     <ProjectCardMemo 
                                         {...task}
@@ -177,7 +177,7 @@ const List = ({children}: React.PropsWithChildren) => {
                                     />
                                 </KanbanItem>
                             ))}
-                            {!column.task.length && (
+                            {!column.tasks.length && (
                                 <KanbanAddCardButton 
                                 onClick={() => handleAddCard({stageId: column.id})}
                             />

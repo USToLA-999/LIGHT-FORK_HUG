@@ -6,35 +6,27 @@ import { CompaniesListQuery } from "@/graphql/types";
 import { currencyNumber } from "@/utilities";
 
 import { SearchOutlined } from "@ant-design/icons";
-import { CreateButton, DeleteButton, EditButton, FilterDropdown, List, useTable } from "@refinedev/antd";
-import { HttpError, getDefaultFilter, useGo } from "@refinedev/core";
+import { CreateButton, DeleteButton, EditButton, FilterDropdown, List, useTable } from "@refinedev/antd"
+import { HttpError, getDefaultFilter, useGo} from "@refinedev/core"
 import { GetFieldsFromList } from "@refinedev/nestjs-query";
 import { Input, Space, Table } from "antd";
 
-// Ensure Company interface matches the data returned by your GraphQL query
-interface Company {
-  id: string;
-  name: string;
-  avatarUrl?: string;
-  dealsAggregate?: Array<{ sum?: { value?: number } }>;
-}
-
-export const CompanyList = ({ children }: React.PropsWithChildren<Company>) => {
+export const CompanyList = ({children}: React.PropsWithChildren ) => {
   const go = useGo();
   const { tableProps, filters } = useTable<
     GetFieldsFromList<CompaniesListQuery>,
     HttpError,
-    Company
+    GetFieldsFromList<CompaniesListQuery>
   >({
-    resource: "companies",
+    resource:"companies",
     onSearch: (values) => {
       return [
         {
           field: 'name',
           operator: 'contains',
-          value: values.name,
-        },
-      ];
+          value: values.name
+        }
+      ]
     },
     pagination: {
       pageSize: 12,
@@ -43,93 +35,94 @@ export const CompanyList = ({ children }: React.PropsWithChildren<Company>) => {
       initial: [
         {
           field: 'createdAt',
-          order: 'desc',
-        },
-      ],
+          order: 'desc'
+        }
+      ]
     },
     filters: {
-      initial: [
+      initial : [
         {
           field: 'name',
           operator: 'contains',
-          value: undefined,
-        },
-      ],
+          value: undefined
+        }
+      ]
     },
     meta: {
-      gqlQuery: COMPANIES_LIST_QUERY,
-    },
-  });
+      gqlQuery : COMPANIES_LIST_QUERY
+    }
+  })
+
 
   return (
     <div>
-      <List
-        breadcrumb={false}
-        headerButtons={() => (
-          <CreateButton
-            onClick={() => {
-              go({
-                to: {
-                  resource: "companies",
-                  action: 'create',
-                },
-                options: {
-                  keepQuery: true,
-                },
-                type: 'replace',
-              });
-            }}
-          />
-        )}
-      >
-        <Table
-          {...tableProps}
-          pagination={{
-            ...tableProps.pagination,
+    <List
+      breadcrumb = {false}
+      headerButtons = {() => (
+        <CreateButton 
+          onClick={() => {
+            go({
+              to: {
+                resource: "companies",
+                action: 'create',
+              },
+              options:{
+                keepQuery : true
+              },
+              type: 'replace'
+            })
           }}
-        >
-          <Table.Column<Company>
-            dataIndex="name"
-            title="Company Title"
-            defaultFilteredValue={getDefaultFilter('name', filters)}
-            filterIcon={<SearchOutlined />}
-            filterDropdown={(props) => (
-              <FilterDropdown {...props}>
-                <Input placeholder="Search Companies" />
-              </FilterDropdown>
-            )}
-            render={(value, record: Company) => (
-              <Space>
-                <CustomAvatar shape="square" name={record.name} src={record.avatarUrl} />
-                <Text style={{ whiteSpace: 'nowrap' }}>
-                  {record.name}
-                </Text>
-              </Space>
-            )}
-          />
-          <Table.Column<Company>
-            dataIndex="dealsAggregate"
-            title="Open Deals Amount"
-            render={(value, company: Company) => (
-              <Text>
-                {currencyNumber(company?.dealsAggregate?.[0]?.sum?.value || 0)}
+        />
+      )}
+    >
+      <Table
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+        }}
+      >
+        <Table.Column
+          dataIndex={'name'}
+          title="Company Title"
+          defaultFilteredValue={getDefaultFilter('id', filters)}
+          filterIcon= {<SearchOutlined/> }
+          filterDropdown = {(props) => (
+            <FilterDropdown {...props}>
+              <Input placeholder='Search Comapnies' />
+            </FilterDropdown>
+          )}
+          render={(value, record) => (
+            <Space>
+              <CustomAvatar shape="square" name={record.name} src={record.avatarUrl} />
+              <Text style={{whiteSpace: 'nowrap'}}>
+                {record.name}
               </Text>
-            )}
-          />
-          <Table.Column<Company>
-            dataIndex="id"
-            title="Actions"
-            fixed="right"
-            render={(value: string) => (
-              <Space>
-                <EditButton hideText size="small" recordItemId={value} />
-                <DeleteButton hideText size="small" recordItemId={value} />
-              </Space>
-            )}
-          />
-        </Table>
-      </List>
-      {children}
+            </Space>
+          )}
+        />
+        <Table.Column
+          dataIndex={'totalRevenue'}
+          title='open deals amount'
+          render={(value, company) => (
+            <Text>
+              {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
+            </Text>
+          )}
+        />
+        <Table.Column
+          dataIndex={'id'}
+          title='Actions'
+          fixed= 'right'
+          render={(value) => (
+            <Space>
+              <EditButton hideText size="small" recordItemId={value} />
+              <DeleteButton hideText size="small" recordItemId={value} />
+            </Space>
+          )}
+        />
+      </Table>
+    </List>
+    {children}
     </div>
-  );
-};
+  )
+}
