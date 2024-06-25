@@ -166,10 +166,10 @@ const List = ({children}: React.PropsWithChildren) => {
                             key={column.id}
                             id={column.id}
                             title={column.title}
-                            count={column.tasks.length}
+                            count={column.task.length}
                             onAddClick={() => handleAddCard({stageId: column.id})}
                         >
-                            {!isLoading && column.tasks.map((task) => (
+                            {!isLoading && column.task.map((task) => (
                                 <KanbanItem key={task.id} id={task.id} data={task}>
                                     <ProjectCardMemo 
                                         {...task}
@@ -177,7 +177,7 @@ const List = ({children}: React.PropsWithChildren) => {
                                     />
                                 </KanbanItem>
                             ))}
-                            {!column.tasks.length && (
+                            {!column.task.length && (
                                 <KanbanAddCardButton 
                                 onClick={() => handleAddCard({stageId: column.id})}
                             />
