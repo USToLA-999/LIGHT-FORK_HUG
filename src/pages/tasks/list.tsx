@@ -8,13 +8,19 @@ import KanbanItem from '@/components/tasks/kanban/item'
 import { UPDATE_TASK_STAGE_MUTATION } from '@/graphql/mutations'
 
 import { TASKS_QUERY, TASK_STAGES_QUERY } from '@/graphql/queries'
-import { TaskStage } from '@/graphql/schema.types'
-import { TasksQuery } from '@/graphql/types'
+
+import { TaskStagesQuery, TasksQuery } from '@/graphql/types'
 import { DragEndEvent } from '@dnd-kit/core'
 import { useList, useNavigation, useUpdate } from '@refinedev/core'
 import { GetFieldsFromList } from '@refinedev/nestjs-query'
 import Item from 'antd/es/list/Item'
 import React from 'react'
+
+type Task = GetFieldsFromList<TasksQuery>
+type TaskStage = GetFieldsFromList<TaskStagesQuery> & {
+    task: Task[]
+}
+
 
 const List = ({children}: React.PropsWithChildren) => {
 
