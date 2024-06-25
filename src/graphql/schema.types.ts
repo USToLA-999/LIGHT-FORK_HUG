@@ -39,6 +39,7 @@ export type Audit = {
   user?: Maybe<User>;
 };
 
+
 export type AuditChange = {
   field: Scalars["String"]["output"];
   from?: Maybe<Scalars["String"]["output"]>;
