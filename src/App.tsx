@@ -17,6 +17,11 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { resources } from "./config/resources";
 import Create from "./pages/company/create";
 import Edit from "./pages/company/edit";
+import List from "./pages/tasks/list";
+import CreateTask from "./pages/tasks/create";
+import EditTask from "./pages/tasks/edit";
+import TasksCreatePage from "./pages/tasks/create";
+import TasksEditPage from "./pages/tasks/edit";
 
 
 function App() {
@@ -66,7 +71,15 @@ function App() {
                             <Route path="new" element = {<Create />} />
                             <Route path="edit/:id" element = {<Edit />} />
                          </Route>
-
+                         <Route path="/task" element = {
+                            <List >
+                                <Outlet />
+                            </List>} >
+                            <Route path="new" element={<TasksCreatePage />} />
+                            <Route path="edit/:id" element={<TasksEditPage />} />
+                         </Route>
+                            
+                         
                       </Route>
                     </Routes>
                     <RefineKbar />
